@@ -15,25 +15,18 @@
   "author": "InterstellarNetwork",
   "license": "GPL-3.0-or-later",
   "dependencies": {
-    "@babel/runtime": "^7.26.0",
     "@nebula-services/bare-server-node": "^2.0.4",
-    "assert": "^2.1.0",
-    "basic-auth": "^2.0.1",
     "chalk": "^5.3.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
-    "crypto-browserify": "^3.12.1",
-    "data-uri-to-buffer": "^6.0.2",
     "dotenv": "^16.4.5",
-    "expo-cli": "^6.3.12",
     "express": "^4.21.1",
     "express-basic-auth": "^1.2.1",
-    "fetch-blob": "^4.0.0",
-    "formdata-polyfill": "^4.0.10",
     "mime": "^4.0.4",
     "node-fetch": "^3.3.2"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4"
-  }
+  },
+  "packageManager": "pnpm@9.10.0"
 }
