@@ -12,8 +12,28 @@
     <link rel="stylesheet" href="/assets/css/nav.css?v=01" />
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6840529569014734"
      crossorigin="anonymous"></script>
+    <style>      #fullscreen-message {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        font-size: 2em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+      }
+</style>
   </head>
   <body class="center">
+        <!-- Full-screen blocking message -->
+    <div id="fullscreen-message">
+      <h1>Access Restricted</h1>
+      <p>To protect our user's this is only accessable in out moderated environment.</p>
+    </div>
     <div id="particles-js">
       <script rel="preload" src="https://cdn.jsdelivr.net/particles.js/2.0.0/"></script>
       <div class="main">
@@ -43,6 +63,15 @@
         "paramountplus.com",
         "max.com"
       ];
+      // Check if the page is loaded inside an iframe
+      if (window.top === window.self) {
+        // If the page is not in an iframe (i.e., accessed directly)
+        // Hide the page content and show the fullscreen message
+        document.getElementById('fullscreen-message').style.display = 'flex';
+      } else {
+        // If the page is inside an iframe, show the actual content
+        document.getElementById('fullscreen-message').style.display = 'none';
+      }
 
       // Load all scripts regardless of the URL validity
       loadScripts();
