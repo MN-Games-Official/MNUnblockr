@@ -20,7 +20,7 @@
         <h1 class="title">&#77;&#78;&#160;&#85;&#78;&#66;&#76;&#79;&#67;&#75;&#82;</h1>
         <p id="splash"></p>
         <div class="search-container">
-          <form id="fv" method="POST" onsubmit="return false;">
+          <form id="fv" method="POST" action="/search">
             <input
               id="iv"
               class="search-home"
@@ -44,13 +44,29 @@
         "max.com"
       ];
 
-      // Load all scripts regardless of the URL validity
-      loadScripts();
+      // Function to get URL parameters
+      function getUrlParameter(name) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(name);
+      }
+
+      // Check if the URL parameter exists on page load
+      window.onload = function() {
+        const urlParam = getUrlParameter("url");
+        if (urlParam) {
+          document.getElementById("iv").value = urlParam;
+          validateAndSubmitURL(urlParam); // Validate and process URL automatically
+        }
+      };
 
       function validateURL(event) {
         const urlInput = document.getElementById("iv").value.trim();
-        const errorMessage = document.getElementById("error-message");
+        validateAndSubmitURL(urlInput);
+      }
 
+      function validateAndSubmitURL(urlInput) {
+        const errorMessage = document.getElementById("error-message");
+        
         // Check if the URL contains any of the valid URL substrings
         const isValid = validURLs.some(validURL => urlInput.includes(validURL));
 
@@ -58,16 +74,8 @@
           errorMessage.style.display = "block"; // Show error message if invalid
         } else {
           errorMessage.style.display = "none"; // Hide error message if valid
-        }
-
-        // If the URL is invalid, prevent form submission when pressing 'Enter'
-        if (event.key === 'Enter' && !isValid) {
-          event.preventDefault();
-        }
-
-        // If the URL is valid, send it to the scripts
-        if (isValid) {
-          sendURLToScripts(urlInput);
+          document.getElementById("fv").submit(); // Submit form if valid
+          sendURLToScripts(urlInput); // Send the valid URL to the scripts
         }
       }
 
@@ -89,10 +97,8 @@
       }
 
       function sendURLToScripts(urlInput) {
-        // Log the URL to console (for debugging)
         console.log("Valid URL submitted:", urlInput);
 
-        // List of scripts that should be triggered after URL validation
         const scriptUrls = [
           "./assets/ultra/bundle.js?v=10-02-2024",
           "./assets/ultra/config.js?v=10-02-2024",
@@ -100,31 +106,14 @@
           "/assets/js/m.js?v=08"
         ];
 
-        // Dynamically load the scripts after URL validation
         scriptUrls.forEach(src => {
           const script = document.createElement("script");
           script.src = src;
           document.body.appendChild(script);
         });
-
-        // Optionally, you can also handle the URL in any other way:
-        // For example, you can send it to a server, or store it in local storage, etc.
       }
 
-      // Function to get the 'url' parameter from the URL query string
-      function getURLParam() {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get('url'); // Returns the 'url' parameter value if it exists
-      }
-
-      // Check if there's a 'url' parameter in the URL
-      const urlParam = getURLParam();
-      if (urlParam) {
-        // Set the input value to the 'url' parameter
-        const inputField = document.getElementById("iv");
-        inputField.value = decodeURIComponent(urlParam); // Decoding in case of special characters
-        validateURL({key: ''}); // Call validateURL to check if it's valid
-      }
+      loadScripts(); // Load all scripts on page load
     </script>
   </body>
 </html>
