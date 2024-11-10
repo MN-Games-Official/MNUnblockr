@@ -20,6 +20,7 @@
     "chalk": "^5.3.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
+    "data-uri-to-buffer": "^6.0.2",
     "dotenv": "^16.4.5",
     "expo-cli": "^6.3.12",
     "express": "^4.21.1",
