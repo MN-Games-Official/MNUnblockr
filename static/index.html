@@ -47,10 +47,29 @@
       // Load all scripts regardless of the URL validity
       loadScripts();
 
+      // Function to get URL parameters
+      function getUrlParameter(name) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(name);
+      }
+
+      // Check if the URL parameter exists on page load
+      window.onload = function() {
+        const urlParam = getUrlParameter("url");
+        if (urlParam) {
+          document.getElementById("iv").value = urlParam;
+          validateAndSubmitURL(urlParam); // Validate and process URL automatically
+        }
+      };
+
       function validateURL(event) {
         const urlInput = document.getElementById("iv").value.trim();
-        const errorMessage = document.getElementById("error-message");
+        validateAndSubmitURL(urlInput);
+      }
 
+      function validateAndSubmitURL(urlInput) {
+        const errorMessage = document.getElementById("error-message");
+        
         // Check if the URL contains any of the valid URL substrings
         const isValid = validURLs.some(validURL => urlInput.includes(validURL));
 
@@ -58,16 +77,7 @@
           errorMessage.style.display = "block"; // Show error message if invalid
         } else {
           errorMessage.style.display = "none"; // Hide error message if valid
-        }
-
-        // If the URL is invalid, prevent form submission when pressing 'Enter'
-        if (event.key === 'Enter' && !isValid) {
-          event.preventDefault();
-        }
-
-        // If the URL is valid, send it to the scripts
-        if (isValid) {
-          sendURLToScripts(urlInput);
+          sendURLToScripts(urlInput); // Send the valid URL to the scripts
         }
       }
 
@@ -106,9 +116,6 @@
           script.src = src;
           document.body.appendChild(script);
         });
-
-        // Optionally, you can also handle the URL in any other way:
-        // For example, you can send it to a server, or store it in local storage, etc.
       }
     </script>
   </body>
