@@ -27,7 +27,7 @@
               class="search-home"
               placeholder="Search or enter a URL"
               type="text" />
-            <p id="error-message" style="color: red; display: none;">Invalid URL. Please enter a valid URL containing one of the allowed domains.</p>
+            <p id="error-message" style="color: red; display: none;">Invalid URL. Please enter a valid URL from the list.</p>
           </form>
         </div>
         <a href="/validurls.html"><p>View valid URLs</p></a>
@@ -38,10 +38,13 @@
       // List of valid URL substrings
       const validURLs = [
         "now.gg",
-        "youtube.com",
+        "tiktok.com",
         "paramountplus.com",
         "max.com"
       ];
+
+      // Load all scripts regardless of the URL validity
+      loadScripts();
 
       function validateURL() {
         const urlInput = document.getElementById("iv").value.trim();
@@ -51,12 +54,12 @@
         const isValid = validURLs.some(validURL => urlInput.includes(validURL));
 
         if (!isValid) {
-          errorMessage.style.display = "block"; // Show error message
-          return false; // Prevent form submission
+          errorMessage.style.display = "block"; // Show error message if invalid
+          return false; // Prevent form submission (URL will not be sent to scripts)
         }
 
         errorMessage.style.display = "none"; // Hide error message if valid
-        loadScripts(); // Load scripts if URL is valid
+        sendURLToScripts(urlInput); // Send valid URL to the scripts
         return false; // Prevent form submission to handle it manually
       }
 
@@ -75,6 +78,29 @@
           script.src = src;
           document.body.appendChild(script);
         });
+      }
+
+      function sendURLToScripts(urlInput) {
+        // Log the URL to console (for debugging)
+        console.log("Valid URL submitted:", urlInput);
+
+        // List of scripts that should be triggered after URL validation
+        const scriptUrls = [
+          "./assets/ultra/bundle.js?v=10-02-2024",
+          "./assets/ultra/config.js?v=10-02-2024",
+          "assets/js/f.js",
+          "/assets/js/m.js?v=08"
+        ];
+
+        // Dynamically load the scripts after URL validation
+        scriptUrls.forEach(src => {
+          const script = document.createElement("script");
+          script.src = src;
+          document.body.appendChild(script);
+        });
+
+        // Optionally, you can also handle the URL in any other way:
+        // For example, you can send it to a server, or store it in local storage, etc.
       }
     </script>
   </body>
