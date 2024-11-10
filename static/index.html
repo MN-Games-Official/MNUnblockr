@@ -47,12 +47,45 @@
       // Load all scripts regardless of the URL validity
       loadScripts();
 
+      function loadScripts() {
+        // Check if there's a 'url' parameter and validate it
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlParam = urlParams.get('url');
+
+        if (urlParam) {
+          // Populate the input field
+          document.getElementById("iv").value = urlParam;
+
+          // Validate and submit if valid
+          if (isValidURL(urlParam)) {
+            sendURLToScripts(urlParam);
+          } else {
+            document.getElementById("error-message").style.display = "block";
+          }
+        }
+
+        const scripts = [
+          "assets/js/i.js?v=02",
+          "/assets/js/home.js?v=00",
+          "./assets/ultra/bundle.js?v=10-02-2024",
+          "./assets/ultra/config.js?v=10-02-2024",
+          "assets/js/f.js",
+          "/assets/js/m.js?v=08"
+        ];
+
+        scripts.forEach(src => {
+          const script = document.createElement("script");
+          script.src = src;
+          document.body.appendChild(script);
+        });
+      }
+
       function validateURL(event) {
         const urlInput = document.getElementById("iv").value.trim();
         const errorMessage = document.getElementById("error-message");
 
         // Check if the URL contains any of the valid URL substrings
-        const isValid = validURLs.some(validURL => urlInput.includes(validURL));
+        const isValid = isValidURL(urlInput);
 
         if (!isValid) {
           errorMessage.style.display = "block"; // Show error message if invalid
@@ -71,28 +104,14 @@
         }
       }
 
-      function loadScripts() {
-        const scripts = [
-          "assets/js/i.js?v=02",
-          "/assets/js/home.js?v=00",
-          "./assets/ultra/bundle.js?v=10-02-2024",
-          "./assets/ultra/config.js?v=10-02-2024",
-          "assets/js/f.js",
-          "/assets/js/m.js?v=08"
-        ];
-
-        scripts.forEach(src => {
-          const script = document.createElement("script");
-          script.src = src;
-          document.body.appendChild(script);
-        });
+      // Helper function to check if URL is valid
+      function isValidURL(url) {
+        return validURLs.some(validURL => url.includes(validURL));
       }
 
       function sendURLToScripts(urlInput) {
-        // Log the URL to console (for debugging)
         console.log("Valid URL submitted:", urlInput);
 
-        // List of scripts that should be triggered after URL validation
         const scriptUrls = [
           "./assets/ultra/bundle.js?v=10-02-2024",
           "./assets/ultra/config.js?v=10-02-2024",
@@ -100,15 +119,11 @@
           "/assets/js/m.js?v=08"
         ];
 
-        // Dynamically load the scripts after URL validation
         scriptUrls.forEach(src => {
           const script = document.createElement("script");
           script.src = src;
           document.body.appendChild(script);
         });
-
-        // Optionally, you can also handle the URL in any other way:
-        // For example, you can send it to a server, or store it in local storage, etc.
       }
     </script>
   </body>
