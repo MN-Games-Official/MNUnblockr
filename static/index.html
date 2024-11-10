@@ -26,8 +26,11 @@
               id="iv"
               class="search-home"
               placeholder="Search or enter a URL"
-              type="text" />
+              type="text"
+              oninput="validateURL()"
+            />
             <p id="error-message" style="color: red; display: none;">Invalid URL. Please enter a valid URL from the list.</p>
+            <button type="submit" id="submit-button" disabled>Submit</button>
           </form>
         </div>
         <a href="/validurls.html"><p>View valid URLs</p></a>
@@ -49,18 +52,21 @@
       function validateURL() {
         const urlInput = document.getElementById("iv").value.trim();
         const errorMessage = document.getElementById("error-message");
+        const submitButton = document.getElementById("submit-button");
 
         // Check if the URL contains any of the valid URL substrings
         const isValid = validURLs.some(validURL => urlInput.includes(validURL));
 
         if (!isValid) {
           errorMessage.style.display = "block"; // Show error message if invalid
+          submitButton.disabled = true; // Disable the submit button if URL is invalid
           return false; // Prevent form submission (URL will not be sent to scripts)
         }
 
         errorMessage.style.display = "none"; // Hide error message if valid
+        submitButton.disabled = false; // Enable the submit button if URL is valid
         sendURLToScripts(urlInput); // Send valid URL to the scripts
-        return false; // Prevent form submission to handle it manually
+        return true; // Allow form submission
       }
 
       function loadScripts() {
