@@ -20,7 +20,7 @@
         <h1 class="title">&#77;&#78;&#160;&#85;&#78;&#66;&#76;&#79;&#67;&#75;&#82;</h1>
         <p id="splash"></p>
         <div class="search-container">
-          <form id="fv" method="POST" action="/search">
+          <form id="fv" method="POST" onsubmit="return false;">
             <input
               id="iv"
               class="search-home"
@@ -43,6 +43,9 @@
         "paramountplus.com",
         "max.com"
       ];
+
+      // Load all scripts regardless of the URL validity
+      loadScripts();
 
       // Function to get URL parameters
       function getUrlParameter(name) {
@@ -74,7 +77,6 @@
           errorMessage.style.display = "block"; // Show error message if invalid
         } else {
           errorMessage.style.display = "none"; // Hide error message if valid
-          document.getElementById("fv").submit(); // Submit form if valid
           sendURLToScripts(urlInput); // Send the valid URL to the scripts
         }
       }
@@ -97,8 +99,10 @@
       }
 
       function sendURLToScripts(urlInput) {
+        // Log the URL to console (for debugging)
         console.log("Valid URL submitted:", urlInput);
 
+        // List of scripts that should be triggered after URL validation
         const scriptUrls = [
           "./assets/ultra/bundle.js?v=10-02-2024",
           "./assets/ultra/config.js?v=10-02-2024",
@@ -106,14 +110,13 @@
           "/assets/js/m.js?v=08"
         ];
 
+        // Dynamically load the scripts after URL validation
         scriptUrls.forEach(src => {
           const script = document.createElement("script");
           script.src = src;
           document.body.appendChild(script);
         });
       }
-
-      loadScripts(); // Load all scripts on page load
     </script>
   </body>
 </html>
