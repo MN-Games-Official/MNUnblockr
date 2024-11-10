@@ -14,13 +14,14 @@
      crossorigin="anonymous"></script>
   </head>
   <body class="center">
+    <div class="f-nav"></div>
     <div id="particles-js">
       <script rel="preload" src="https://cdn.jsdelivr.net/particles.js/2.0.0/"></script>
       <div class="main">
         <h1 class="title">&#77;&#78;&#160;&#85;&#78;&#66;&#76;&#79;&#67;&#75;&#82;</h1>
         <p id="splash"></p>
         <div class="search-container">
-          <form id="fv" method="POST" action="/search">
+          <form id="fv" method="POST" onsubmit="return false;">
             <input
               id="iv"
               class="search-home"
@@ -44,29 +45,11 @@
         "max.com"
       ];
 
-      // Function to get URL parameters
-      function getUrlParameter(name) {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get(name);
-      }
-
-      // Check if the URL parameter exists on page load
-      window.onload = function() {
-        const urlParam = getUrlParameter("url");
-        if (urlParam) {
-          document.getElementById("iv").value = urlParam;
-          validateAndSubmitURL(urlParam); // Validate and process URL automatically
-        }
-      };
-
+      // Function to validate the URL input
       function validateURL(event) {
         const urlInput = document.getElementById("iv").value.trim();
-        validateAndSubmitURL(urlInput);
-      }
-
-      function validateAndSubmitURL(urlInput) {
         const errorMessage = document.getElementById("error-message");
-        
+
         // Check if the URL contains any of the valid URL substrings
         const isValid = validURLs.some(validURL => urlInput.includes(validURL));
 
@@ -74,11 +57,20 @@
           errorMessage.style.display = "block"; // Show error message if invalid
         } else {
           errorMessage.style.display = "none"; // Hide error message if valid
-          document.getElementById("fv").submit(); // Submit form if valid
-          sendURLToScripts(urlInput); // Send the valid URL to the scripts
+        }
+
+        // Prevent Enter key submission if the URL is invalid
+        if (event.key === 'Enter' && !isValid) {
+          event.preventDefault();
+        }
+
+        // Send the valid URL to the scripts
+        if (isValid) {
+          sendURLToScripts(urlInput);
         }
       }
 
+      // Function to load the scripts
       function loadScripts() {
         const scripts = [
           "assets/js/i.js?v=02",
@@ -96,6 +88,7 @@
         });
       }
 
+      // Function to load additional scripts after URL validation
       function sendURLToScripts(urlInput) {
         console.log("Valid URL submitted:", urlInput);
 
@@ -113,7 +106,30 @@
         });
       }
 
-      loadScripts(); // Load all scripts on page load
+      // Function to retrieve URL parameters
+      function getURLParameter(name) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(name);
+      }
+
+      // Check for "url" parameter on page load and validate if present
+      document.addEventListener("DOMContentLoaded", () => {
+        const urlParam = getURLParameter("url");
+
+        if (urlParam) {
+          document.getElementById("iv").value = urlParam; // Set the input field
+          const isValid = validURLs.some(validURL => urlParam.includes(validURL));
+
+          if (isValid) {
+            sendURLToScripts(urlParam); // Load scripts and pass URL if valid
+          } else {
+            document.getElementById("error-message").style.display = "block";
+          }
+        }
+      });
+
+      // Load all general scripts
+      loadScripts();
     </script>
   </body>
 </html>
