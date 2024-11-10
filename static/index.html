@@ -21,16 +21,15 @@
         <h1 class="title">&#77;&#78;&#160;&#85;&#78;&#66;&#76;&#79;&#67;&#75;&#82;</h1>
         <p id="splash"></p>
         <div class="search-container">
-          <form id="fv" method="POST" onsubmit="return validateURL()">
+          <form id="fv" method="POST" onsubmit="return false;">
             <input
               id="iv"
               class="search-home"
               placeholder="Search or enter a URL"
               type="text"
-              oninput="validateURL()"
+              oninput="validateURL(event)"
             />
             <p id="error-message" style="color: red; display: none;">Invalid URL. Please enter a valid URL from the list.</p>
-            <button type="submit" id="submit-button" disabled>Submit</button>
           </form>
         </div>
         <a href="/validurls.html"><p>View valid URLs</p></a>
@@ -49,24 +48,28 @@
       // Load all scripts regardless of the URL validity
       loadScripts();
 
-      function validateURL() {
+      function validateURL(event) {
         const urlInput = document.getElementById("iv").value.trim();
         const errorMessage = document.getElementById("error-message");
-        const submitButton = document.getElementById("submit-button");
 
         // Check if the URL contains any of the valid URL substrings
         const isValid = validURLs.some(validURL => urlInput.includes(validURL));
 
         if (!isValid) {
           errorMessage.style.display = "block"; // Show error message if invalid
-          submitButton.disabled = true; // Disable the submit button if URL is invalid
-          return false; // Prevent form submission (URL will not be sent to scripts)
+        } else {
+          errorMessage.style.display = "none"; // Hide error message if valid
         }
 
-        errorMessage.style.display = "none"; // Hide error message if valid
-        submitButton.disabled = false; // Enable the submit button if URL is valid
-        sendURLToScripts(urlInput); // Send valid URL to the scripts
-        return true; // Allow form submission
+        // If the URL is invalid, prevent form submission when pressing 'Enter'
+        if (event.key === 'Enter' && !isValid) {
+          event.preventDefault();
+        }
+
+        // If the URL is valid, send it to the scripts
+        if (isValid) {
+          sendURLToScripts(urlInput);
+        }
       }
 
       function loadScripts() {
