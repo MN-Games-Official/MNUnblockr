@@ -13,41 +13,69 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6840529569014734"
      crossorigin="anonymous"></script>
   </head>
-  <body class="center" onload="SplashT">
+  <body class="center">
     <div class="f-nav"></div>
     <div id="particles-js">
       <script rel="preload" src="https://cdn.jsdelivr.net/particles.js/2.0.0/"></script>
       <div class="main">
-<h1 class="title">&#73;&#110;&#116;&#101;&#114;&#115;&#116;&#101;&#108;&#108;&#97;&#114;</h1>
+        <h1 class="title">&#77;&#78;&#160;&#85;&#78;&#66;&#76;&#79;&#67;&#75;&#82;</h1>
         <p id="splash"></p>
         <div class="search-container">
-          <form id="fv" method="POST">
+          <form id="fv" method="POST" onsubmit="return validateURL()">
             <input
               id="iv"
               class="search-home"
               placeholder="Search or enter a URL"
               type="text" />
+            <p id="error-message" style="color: red; display: none;">Invalid URL. Please enter a valid URL containing one of the allowed domains.</p>
           </form>
         </div>
+        <a href="/validurls.html"><p>View valid URLs</p></a>
       </div>
     </div>
-    <script src="assets/js/i.js?v=02"></script>
-    <script src="/assets/js/home.js?v=00"></script>
-    <script src="./assets/ultra/bundle.js?v=10-02-2024"></script>
-    <script src="./assets/ultra/config.js?v=10-02-2024"></script>
-    <script src="assets/js/f.js"></script>
-    <script src="/assets/js/m.js?v=08"></script>
-    <!-- DO NOT REMOVE-->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WKJQ5QHQTJ"></script>
-    <script>
-      window.dataLayer = window.dataLayer || []
-      function gtag() {
-        dataLayer.push(arguments)
-      }
-      gtag("js", new Date())
 
-      gtag("config", "G-WKJQ5QHQTJ")
+    <script>
+      // List of valid URL substrings
+      const validURLs = [
+        "https://now.gg",
+        "https://tiktok.com",
+        "https://paramountplus.com/pag",
+        "https://max.com"
+      ];
+
+      function validateURL() {
+        const urlInput = document.getElementById("iv").value.trim();
+        const errorMessage = document.getElementById("error-message");
+
+        // Check if the URL contains any of the valid URL substrings
+        const isValid = validURLs.some(validURL => urlInput.includes(validURL));
+
+        if (!isValid) {
+          errorMessage.style.display = "block"; // Show error message
+          return false; // Prevent form submission
+        }
+
+        errorMessage.style.display = "none"; // Hide error message if valid
+        loadScripts(); // Load scripts if URL is valid
+        return false; // Prevent form submission to handle it manually
+      }
+
+      function loadScripts() {
+        const scripts = [
+          "assets/js/i.js?v=02",
+          "/assets/js/home.js?v=00",
+          "./assets/ultra/bundle.js?v=10-02-2024",
+          "./assets/ultra/config.js?v=10-02-2024",
+          "assets/js/f.js",
+          "/assets/js/m.js?v=08"
+        ];
+
+        scripts.forEach(src => {
+          const script = document.createElement("script");
+          script.src = src;
+          document.body.appendChild(script);
+        });
+      }
     </script>
-    <!-- DO NOT REMOVE-->
   </body>
 </html>
