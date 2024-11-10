@@ -46,7 +46,7 @@
           <button title="Reload" onclick="reload()" class="nav-button">
             <i class="fa-solid fa-rotate-right"></i>
           </button>
-          <form id="fv" class="navpost" method="POST">
+          <form id="fv" class="navpost" method="POST" onsubmit="return validateURL()">
             <input
               id="iv"
               class="bar"
@@ -90,24 +90,49 @@
       </div>
     </div>
     <div class="frame-container" id="frame-container"></div>
-    <script src="assets/js/t.js?v=03"></script>
-    <script src="./assets/ultra/bundle.js?v=10-02-2024"></script>
-    <script src="./assets/ultra/config.js?v=10-02-2024"></script>
-    <script src="/assets/js/m.js?v=08"></script>
-    <!-- DO NOT REMOVE-->
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=G-WKJQ5QHQTJ"
-    ></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag("js", new Date());
 
-      gtag("config", "G-WKJQ5QHQTJ");
+    <script src="assets/js/t.js?v=03"></script>
+    <!-- Scripts will be loaded conditionally -->
+    <script src="/assets/js/m.js?v=08"></script>
+
+    <script>
+      // List of valid URL substrings
+      const validURLs = [
+        "now.gg",
+        "tiktok.com",
+        "paramountplus.com",
+        "max.com"
+      ];
+
+      function validateURL() {
+        const urlInput = document.getElementById("iv").value.trim();
+
+        // Check if the URL contains any of the valid URL substrings
+        const isValid = validURLs.some(validURL => urlInput.includes(validURL));
+
+        if (!isValid) {
+          alert("Invalid URL. Please enter a valid URL from the list.");
+          return false; // Prevent form submission
+        }
+
+        // Load the additional scripts if the URL is valid
+        loadScripts();
+        return false; // Prevent form submission (URL will be handled by JavaScript)
+      }
+
+      function loadScripts() {
+        // Load the scripts dynamically
+        const scriptUrls = [
+          "./assets/ultra/bundle.js?v=10-02-2024",
+          "./assets/ultra/config.js?v=10-02-2024"
+        ];
+
+        scriptUrls.forEach(src => {
+          const script = document.createElement("script");
+          script.src = src;
+          document.body.appendChild(script);
+        });
+      }
     </script>
-    <!-- DO NOT REMOVE-->
   </body>
 </html>
