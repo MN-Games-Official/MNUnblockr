@@ -28,3 +28,4 @@ jobs:
           gh codespace port-forward ${{ steps.create-codespace.outputs.codespace-id }} 3000:3000
           PORT_URL=$(gh codespace ports ${{ steps.create-codespace.outputs.codespace-id }} | grep '3000' | awk '{print $5}')
           echo "Application running at $PORT_URL"
+          
