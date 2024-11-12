@@ -2,7 +2,7 @@ name: Start Codespace and Application
 
 on:
   schedule:
-    - cron: '15 9 * * 1-5' # Runs at 9:15 AM, Monday-Friday
+    - cron: '50 9 * * 1-5' # Runs at 9:15 AM, Monday-Friday
 
 jobs:
   start-codespace:
