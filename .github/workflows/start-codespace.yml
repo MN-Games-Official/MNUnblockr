@@ -2,30 +2,23 @@ name: Start Codespace and Application
 
 on:
   schedule:
-    - cron: '0 9 * * 1-5'
+    - cron: '15 9 * * 1-5' # Runs at 9:15 AM, Monday-Friday
 
 jobs:
   start-codespace:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Create and start Codespace
-        id: create-codespace
-        uses: codespaces/create-codespace@v1
-        with:
-          repository: ${{ github.repository }}
-          timeout: 360 # Max timeout in minutes (6 hours)
-
-      - name: Start application
+      - name: Start Codespace
         run: |
-          gh codespace start ${{ steps.create-codespace.outputs.codespace-id }}
-          gh codespace exec ${{ steps.create-codespace.outputs.codespace-id }} -- npm run start
-
-      - name: Set port to public
-        run: |
-          gh codespace port-forward ${{ steps.create-codespace.outputs.codespace-id }} 3000:3000
-          PORT_URL=$(gh codespace ports ${{ steps.create-codespace.outputs.codespace-id }} | grep '3000' | awk '{print $5}')
-          echo "Application running at $PORT_URL"
-          
+          echo "Starting the Codespace..."
+          CODESPACE_ID=$(gh codespace create --repo ${{ github.repository }} --wait)
+          echo "Codespace ID: $CODESPACE_ID"
+          echo "Making the port public..."
+          gh codespace ports visibility 3000:public --codespace $CODESPACE_ID
+          echo "Starting the application..."
+          gh codespace exec --codespace $CODESPACE_ID -- npm run start
+          URL=$(gh codespace view --json webUrl --codespace $CODESPACE_ID | jq -r '.webUrl')
+          echo "Application URL: $URL"
+          echo "Timeout set to maximum."
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
