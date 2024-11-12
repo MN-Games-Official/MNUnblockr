@@ -1,0 +1,36 @@
+name: Schedule Codespace
+
+on:
+  schedule:
+    - cron: '25 16 * * 1-5'   # Start at 8:00 AM UTC, Monday-Friday
+    - cron: '30 13 * * 1-5' # Stop at 1:30 PM UTC, Monday-Friday
+
+jobs:
+  start-and-setup-codespace:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Start the Codespace
+      - name: Start Codespace
+        run: |
+          gh codespace create --repo MN-Games-Official/TechEd --branch main --wait
+
+      # Install dependencies and start the app
+      - name: Install and Start App
+        run: |
+          gh codespace exec --repo MN-Games-Official/TechEd --branch main --command "pnpm install && pnpm start"
+
+      # Make the port public
+      - name: Make Port Public
+        run: |
+          gh codespace ports visibility set 3000:public --repo MN-Games-Official/TechEd --branch main
+
+  stop-codespace:
+    runs-on: ubuntu-latest
+    needs: start-and-setup-codespace
+
+    steps:
+      # Stop the Codespace
+      - name: Stop Codespace
+        run: |
+          gh codespace stop --repo MN-Games-Official/TechEd --branch main
