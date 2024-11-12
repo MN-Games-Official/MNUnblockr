@@ -1,25 +1,27 @@
-name: Check and Start Codespace
+name: Hourly Check Codespace
 
 on:
   schedule:
-    - cron: '0 9-13 * * 1-5'
+    - cron: '0 9-13 * * 1-5' # Runs every hour from 9:00 AM to 1:00 PM, Monday-Friday
 
 jobs:
-  check-codespace:
+  check-and-start-codespace:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Check Codespace status
-        id: check-codespace
+      - name: Check if Codespace is Active
         run: |
-          CODESPACE_STATUS=$(gh codespace list --json state --jq '.[0].state')
-          echo "Codespace status: $CODESPACE_STATUS"
-          echo "::set-output name=status::$CODESPACE_STATUS"
-
-      - name: Start Codespace if not running
-        if: steps.check-codespace.outputs.status != 'Available'
-        run: |
-          gh codespace start ${{ steps.check-codespace.outputs.codespace-id }}
-          gh codespace exec ${{ steps.check-codespace.outputs.codespace-id }} -- npm run start
+          echo "Checking for active Codespaces..."
+          ACTIVE_CODESPACE=$(gh codespace list --json id --jq '.[0].id')
+          if [ -z "$ACTIVE_CODESPACE" ]; then
+            echo "No active Codespaces. Starting a new one..."
+            CODESPACE_ID=$(gh codespace create --repo ${{ github.repository }} --wait)
+            echo "New Codespace ID: $CODESPACE_ID"
+            echo "Making the port public..."
+            gh codespace ports visibility 3000:public --codespace $CODESPACE_ID
+            echo "Starting the application..."
+            gh codespace exec --codespace $CODESPACE_ID -- npm run start
+          else
+            echo "Codespace is already active."
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
