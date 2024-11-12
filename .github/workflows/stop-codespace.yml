@@ -1,18 +1,22 @@
-name: Stop Application and Codespace
+name: Stop Codespace
 
 on:
   schedule:
-    - cron: '30 13 * * 1-5'
+    - cron: '30 13 * * 1-5' # Runs at 1:30 PM, Monday-Friday
 
 jobs:
   stop-codespace:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Stop application and Codespace
+      - name: Stop Codespace
         run: |
-          CODESPACE_ID=$(gh codespace list --json id --jq '.[0].id')
-          gh codespace exec $CODESPACE_ID -- npm stop
-          gh codespace stop $CODESPACE_ID
+          echo "Fetching active Codespaces..."
+          ACTIVE_CODESPACE=$(gh codespace list --json id --jq '.[0].id')
+          if [ -n "$ACTIVE_CODESPACE" ]; then
+            echo "Stopping Codespace: $ACTIVE_CODESPACE"
+            gh codespace stop --codespace $ACTIVE_CODESPACE
+          else
+            echo "No active Codespaces found."
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
