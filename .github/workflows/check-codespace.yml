@@ -1,0 +1,25 @@
+name: Check and Start Codespace
+
+on:
+  schedule:
+    - cron: '0 9-13 * * 1-5'
+
+jobs:
+  check-codespace:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Check Codespace status
+        id: check-codespace
+        run: |
+          CODESPACE_STATUS=$(gh codespace list --json state --jq '.[0].state')
+          echo "Codespace status: $CODESPACE_STATUS"
+          echo "::set-output name=status::$CODESPACE_STATUS"
+
+      - name: Start Codespace if not running
+        if: steps.check-codespace.outputs.status != 'Available'
+        run: |
+          gh codespace start ${{ steps.check-codespace.outputs.codespace-id }}
+          gh codespace exec ${{ steps.check-codespace.outputs.codespace-id }} -- npm run start
