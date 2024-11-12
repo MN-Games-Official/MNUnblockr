@@ -1,0 +1,30 @@
+name: Start Codespace and Application
+
+on:
+  schedule:
+    - cron: '0 9 * * 1-5'
+
+jobs:
+  start-codespace:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Create and start Codespace
+        id: create-codespace
+        uses: codespaces/create-codespace@v1
+        with:
+          repository: ${{ github.repository }}
+          timeout: 360 # Max timeout in minutes (6 hours)
+
+      - name: Start application
+        run: |
+          gh codespace start ${{ steps.create-codespace.outputs.codespace-id }}
+          gh codespace exec ${{ steps.create-codespace.outputs.codespace-id }} -- npm run start
+
+      - name: Set port to public
+        run: |
+          gh codespace port-forward ${{ steps.create-codespace.outputs.codespace-id }} 3000:3000
+          PORT_URL=$(gh codespace ports ${{ steps.create-codespace.outputs.codespace-id }} | grep '3000' | awk '{print $5}')
+          echo "Application running at $PORT_URL"
