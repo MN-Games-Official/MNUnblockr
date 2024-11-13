@@ -2,7 +2,7 @@ name: Schedule Codespace
 
 on:
   schedule:
-    - cron: '25 16 * * 1-5'   # Start at 8:00 AM UTC, Monday-Friday
+    - cron: '0 8 * * 1-5'   # Start at 8:00 AM UTC, Monday-Friday
     - cron: '30 13 * * 1-5' # Stop at 1:30 PM UTC, Monday-Friday
 
 jobs:
