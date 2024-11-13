@@ -18,4 +18,3 @@ jobs:
           gh codespace stop --name effective-spork
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CRONITOR_API_KEY: ${{ secrets.CRONITOR_API_KEY }}
