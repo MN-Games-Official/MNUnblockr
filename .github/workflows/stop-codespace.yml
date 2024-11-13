@@ -1,20 +1,21 @@
-name: Stop Application and Codespace
+name: Stop Codespace
 
 on:
   schedule:
-    - cron: '30 13 * * 1-5'
+    - cron: '30 19 * * 1-5' # Stop at 1:30 PM Central Time (19:30 UTC), Monday-Friday
 
 jobs:
   stop-codespace:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Stop application and Codespace
+      - name: Stop the Codespace
         run: |
           echo "Stopping the Codespace 'effective spork'..."
-          gh codespace exec --codespace effective-spork -- npm stop
           gh codespace stop --name effective-spork
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CRONITOR_API_KEY: ${{ secrets.CRONITOR_API_KEY }}
