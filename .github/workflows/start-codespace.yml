@@ -1,24 +1,27 @@
-name: Start Codespace and Application
+name: Start Codespace
 
 on:
   schedule:
-    - cron: '50 9 * * 1-5' # Runs at 9:15 AM, Monday-Friday
+    - cron: '40 14 * * 1-5'   # Start at 8:00 AM Central Time (14:00 UTC), Monday-Friday
 
 jobs:
-  start-codespace:
+  start-and-setup-codespace:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Start Codespace
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Start existing Codespace and application
         run: |
-          echo "Starting the Codespace..."
-          CODESPACE_ID=$(gh codespace create --repo ${{ github.repository }} --wait)
-          echo "Codespace ID: $CODESPACE_ID"
+          echo "Starting the existing Codespace 'effective spork'..."
+          gh codespace start --name effective-spork
           echo "Making the port public..."
-          gh codespace ports visibility 3000:public --codespace $CODESPACE_ID
+          gh codespace ports visibility 3000:public --codespace effective-spork
           echo "Starting the application..."
-          gh codespace exec --codespace $CODESPACE_ID -- npm run start
-          URL=$(gh codespace view --json webUrl --codespace $CODESPACE_ID | jq -r '.webUrl')
+          gh codespace exec --codespace effective-spork -- pnpm install && pnpm start
+          URL=$(gh codespace view --json webUrl --codespace effective-spork | jq -r '.webUrl')
           echo "Application URL: $URL"
-          echo "Timeout set to maximum."
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CRONITOR_API_KEY: ${{ secrets.CRONITOR_API_KEY }}
